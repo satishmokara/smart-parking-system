@@ -6,6 +6,26 @@
 <title>Smart Parking System</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.1.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.1.0/firebase-database-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyDXsxBCllTlEwT4fUgbUmw7hbRIq6OoYkg",
+    authDomain: "smart-parking-system-d0052.firebaseapp.com",
+    databaseURL: "https://smart-parking-system-d0052-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "smart-parking-system-d0052",
+    storageBucket: "smart-parking-system-d0052.firebasestorage.app",
+    messagingSenderId: "124196243357",
+    appId: "AIzaSyDXsxBCllTlEwT4fUgbUmw7hbRIq6OoYkg"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+
+  const database = firebase.database();
+  database.ref("test").set({
+    connected: true
+});
+</script>
 
 <style>
 *{
@@ -3848,24 +3868,8 @@ function(){
 };
 
 </script>
- <!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/12.1.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/12.1.0/firebase-database-compat.js"></script>
+ 
 
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyDXsxBCllTlEwT4fUgbUmw7hbRIq6OoYkg",
-    authDomain: "smart-parking-system-d0052.firebaseapp.com",
-    databaseURL: "https://smart-parking-system-d0052-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "smart-parking-system-d0052",
-    storageBucket: "smart-parking-system-d0052.firebasestorage.app",
-    messagingSenderId: "124196243357",
-    appId: "AIzaSyDXsxBCllTlEwT4fUgbUmw7hbRIq6OoYkg"
-  };
 
-  firebase.initializeApp(firebaseConfig);
-
-  const database = firebase.database();
-</script>
 </body>
 </html>
