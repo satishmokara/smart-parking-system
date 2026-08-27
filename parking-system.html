@@ -1,0 +1,3853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Parking System</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:"Segoe UI",Arial,sans-serif;
+}
+
+body{
+    background:#f4f7fb;
+    color:#172033;
+}
+
+button{
+    cursor:pointer;
+}
+
+.hidden{
+    display:none!important;
+}
+
+
+/* ================= AUTH ================= */
+
+.auth-page{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+    background:linear-gradient(135deg,#061a33,#1261a0);
+}
+
+.auth-card{
+    width:100%;
+    max-width:430px;
+    background:white;
+    padding:35px;
+    border-radius:20px;
+    box-shadow:0 25px 60px rgba(0,0,0,.25);
+}
+
+.logo{
+    text-align:center;
+    margin-bottom:30px;
+}
+
+.logo-icon{
+    width:65px;
+    height:65px;
+    margin:auto;
+    border-radius:16px;
+    background:#1261a0;
+    color:white;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:28px;
+    font-weight:bold;
+}
+
+.logo h1{
+    margin-top:13px;
+    font-size:24px;
+    color:#092b4c;
+}
+
+.logo p{
+    color:#718096;
+    margin-top:5px;
+}
+
+.auth-card h2{
+    margin-bottom:20px;
+}
+
+.form-group{
+    margin-bottom:16px;
+}
+
+.form-group label{
+    display:block;
+    margin-bottom:7px;
+    font-size:14px;
+    font-weight:600;
+}
+
+.form-group input,
+.form-group select{
+    width:100%;
+    padding:13px;
+    border:1px solid #d9e1ea;
+    border-radius:9px;
+    outline:none;
+    font-size:15px;
+    background:white;
+}
+
+.form-group input:focus,
+.form-group select:focus{
+    border-color:#1261a0;
+}
+
+.primary-btn{
+    width:100%;
+    padding:13px;
+    background:#1261a0;
+    color:white;
+    border:none;
+    border-radius:9px;
+    font-weight:600;
+    font-size:15px;
+}
+
+.primary-btn:hover{
+    background:#0b4e82;
+}
+
+.secondary-btn{
+    width:100%;
+    padding:12px;
+    margin-top:8px;
+    background:#edf4fa;
+    color:#1261a0;
+    border:none;
+    border-radius:9px;
+    font-weight:600;
+}
+
+.switch{
+    text-align:center;
+    margin-top:20px;
+    color:#718096;
+    font-size:14px;
+}
+
+.switch span{
+    color:#1261a0;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+
+/* ================= TOPBAR ================= */
+
+.topbar{
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+    height:70px;
+
+    background:white;
+    border-bottom:1px solid #e3e8ef;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    padding:0 30px;
+
+    z-index:100;
+}
+
+.brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.brand-icon{
+    width:42px;
+    height:42px;
+    border-radius:10px;
+    background:#1261a0;
+    color:white;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    font-weight:bold;
+}
+
+.brand h2{
+    font-size:19px;
+}
+
+.profile{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    cursor:pointer;
+}
+
+.avatar{
+    width:40px;
+    height:40px;
+    border-radius:50%;
+    background:#dcecf8;
+    color:#1261a0;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-weight:bold;
+}
+
+
+/* ================= SIDEBAR ================= */
+
+.sidebar{
+    position:fixed;
+
+    top:70px;
+    left:0;
+    bottom:0;
+
+    width:230px;
+
+    background:#092b4c;
+
+    padding:20px 14px;
+
+    z-index:50;
+}
+
+.menu{
+    padding:13px 15px;
+    margin-bottom:6px;
+
+    border-radius:9px;
+
+    color:#cbd8e5;
+
+    cursor:pointer;
+
+    font-size:14px;
+}
+
+.menu:hover,
+.menu.active{
+    background:#1261a0;
+    color:white;
+}
+
+
+/* ================= MAIN ================= */
+
+.main{
+    margin-left:230px;
+    padding:100px 30px 30px;
+}
+
+.page-title{
+    font-size:28px;
+    margin-bottom:5px;
+}
+
+.page-subtitle{
+    color:#718096;
+    margin-bottom:25px;
+}
+
+
+/* ================= STATS ================= */
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:18px;
+    margin-bottom:25px;
+}
+
+.stat{
+    background:white;
+
+    border:1px solid #e4e9ef;
+
+    border-radius:15px;
+
+    padding:22px;
+
+    transition:.2s;
+}
+
+.stat:hover{
+    transform:translateY(-3px);
+
+    box-shadow:
+    0 10px 25px
+    rgba(0,0,0,.07);
+}
+
+.stat.clickable{
+    cursor:pointer;
+}
+
+.stat-label{
+    color:#718096;
+    font-size:14px;
+}
+
+.stat-number{
+    font-size:30px;
+    font-weight:bold;
+    margin-top:8px;
+}
+
+.green{
+    color:#198754;
+}
+
+.red{
+    color:#d13a3a;
+}
+
+.orange{
+    color:#c77b00;
+}
+
+.blue{
+    color:#1261a0;
+}
+
+
+/* ================= SECTION ================= */
+
+.section{
+    background:white;
+
+    border:1px solid #e4e9ef;
+
+    border-radius:15px;
+
+    padding:25px;
+}
+
+.section-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    margin-bottom:22px;
+}
+
+
+/* ================= MINI SLOTS ================= */
+
+.mini-slots{
+    display:grid;
+
+    grid-template-columns:
+    repeat(5,1fr);
+
+    gap:10px;
+}
+
+.mini-slot{
+    height:55px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:8px;
+
+    color:white;
+
+    font-weight:bold;
+}
+
+
+/* ================= EMPTY SLOT PAGE ================= */
+
+.available-grid{
+    display:grid;
+
+    grid-template-columns:
+    repeat(5,1fr);
+
+    gap:18px;
+}
+
+.available-slot{
+    height:120px;
+
+    background:#42b96a;
+
+    border-radius:12px;
+
+    color:white;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-size:20px;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+    transition:.2s;
+
+    box-shadow:
+    0 5px 12px
+    rgba(0,0,0,.12);
+}
+
+.available-slot span{
+    font-size:12px;
+    margin-top:5px;
+    opacity:.9;
+}
+
+.available-slot:hover{
+    transform:translateY(-5px) scale(1.02);
+
+    box-shadow:
+    0 12px 25px
+    rgba(0,0,0,.18);
+}
+
+
+/* ================= PARKING MAP ================= */
+
+.parking-map{
+    position:relative;
+
+    background:#d9dee4;
+
+    border:8px solid #9ba4ad;
+
+    border-radius:18px;
+
+    padding:55px 45px 75px;
+
+    overflow:hidden;
+
+    max-width:1100px;
+
+    margin:auto;
+}
+
+.map-title{
+    position:absolute;
+
+    top:15px;
+    left:50%;
+
+    transform:translateX(-50%);
+
+    background:white;
+
+    padding:8px 24px;
+
+    border-radius:20px;
+
+    font-weight:bold;
+
+    color:#092b4c;
+
+    z-index:10;
+
+    box-shadow:
+    0 3px 10px
+    rgba(0,0,0,.1);
+}
+
+
+/* parking rows */
+
+.map-row{
+    position:relative;
+
+    z-index:5;
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(5,1fr);
+
+    gap:18px;
+
+    margin-bottom:28px;
+
+    padding:0 5px;
+}
+
+
+/* lane */
+
+.drive-lane{
+    height:40px;
+
+    margin-bottom:28px;
+
+    background:#737b83;
+
+    border-radius:8px;
+
+    position:relative;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    color:white;
+
+    font-size:12px;
+
+    letter-spacing:2px;
+
+    font-weight:bold;
+}
+
+.drive-lane::after{
+    content:"";
+
+    position:absolute;
+
+    left:20px;
+    right:20px;
+
+    top:50%;
+
+    border-top:
+    3px dashed #f5f5f5;
+}
+
+
+/* map slot */
+
+.map-slot{
+    height:105px;
+
+    border-radius:9px;
+
+    border:4px solid white;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-size:20px;
+
+    font-weight:bold;
+
+    box-shadow:
+    0 5px 12px
+    rgba(0,0,0,.15);
+
+    transition:.2s;
+}
+
+.map-slot.empty{
+    background:#42b96a;
+
+    color:white;
+
+    cursor:pointer;
+}
+
+.map-slot.empty:hover{
+    transform:
+    translateY(-4px)
+    scale(1.03);
+
+    box-shadow:
+    0 10px 22px
+    rgba(0,0,0,.22);
+}
+
+.map-slot.occupied{
+    background:#df5050;
+
+    color:white;
+
+    cursor:not-allowed;
+}
+
+.map-slot.reserved{
+    background:#e3a332;
+
+    color:white;
+
+    cursor:not-allowed;
+}
+
+
+/* entrance */
+
+.map-entrance{
+    position:absolute;
+
+    bottom:12px;
+
+    left:50%;
+
+    transform:
+    translateX(-50%);
+
+    background:#1261a0;
+
+    color:white;
+
+    padding:11px 35px;
+
+    border-radius:8px;
+
+    font-weight:bold;
+
+    z-index:10;
+}
+
+
+/* ================= MODAL ================= */
+
+.modal-bg{
+    position:fixed;
+
+    inset:0;
+
+    background:
+    rgba(0,0,0,.55);
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    z-index:300;
+
+    padding:20px;
+}
+
+.modal{
+    width:100%;
+
+    max-width:470px;
+
+    background:white;
+
+    border-radius:16px;
+
+    padding:28px;
+
+    box-shadow:
+    0 25px 60px
+    rgba(0,0,0,.25);
+}
+
+.modal h2{
+    margin-bottom:8px;
+}
+
+.slot-selected{
+    margin:20px 0;
+
+    background:#edf8f1;
+
+    border:1px solid #bfe4cb;
+
+    padding:18px;
+
+    border-radius:10px;
+}
+
+.price-box{
+    margin:15px 0;
+
+    background:#f5f8fb;
+
+    padding:18px;
+
+    border-radius:10px;
+}
+
+.price-box div{
+    display:flex;
+
+    justify-content:space-between;
+
+    padding:8px 0;
+}
+
+.total-price{
+    font-size:24px;
+
+    font-weight:bold;
+
+    color:#1261a0;
+}
+
+
+/* ================= BOOKING ================= */
+
+.booking-card{
+    max-width:650px;
+
+    background:white;
+
+    border:1px solid #e4e9ef;
+
+    border-radius:15px;
+
+    padding:30px;
+}
+
+.booking-info{
+    background:#f5f8fb;
+
+    padding:20px;
+
+    margin:20px 0;
+
+    border-radius:10px;
+}
+
+.info-row{
+    display:flex;
+
+    justify-content:space-between;
+
+    gap:15px;
+
+    padding:11px 0;
+
+    border-bottom:
+    1px solid #e0e6ed;
+}
+
+.info-row:last-child{
+    border-bottom:none;
+}
+
+.timer{
+    background:#fff4df;
+
+    border:1px solid #f0d39c;
+
+    padding:15px;
+
+    border-radius:9px;
+
+    margin-bottom:15px;
+
+    color:#966000;
+
+    font-weight:bold;
+}
+
+
+/* ================= QR ================= */
+
+.qr-card{
+    max-width:500px;
+
+    margin:auto;
+
+    background:white;
+
+    border:1px solid #e4e9ef;
+
+    border-radius:15px;
+
+    padding:35px;
+
+    text-align:center;
+}
+
+#qrcode{
+    display:flex;
+
+    justify-content:center;
+
+    margin:25px 0;
+}
+
+.qr-details{
+    text-align:left;
+
+    background:#f5f8fb;
+
+    padding:18px;
+
+    border-radius:10px;
+}
+
+.qr-details p{
+    margin:8px 0;
+
+    font-size:14px;
+}
+
+
+/* ================= PROFILE ================= */
+
+.profile-card{
+    max-width:650px;
+
+    background:white;
+
+    border:1px solid #e4e9ef;
+
+    border-radius:15px;
+
+    padding:30px;
+}
+
+.large-avatar{
+    width:80px;
+    height:80px;
+
+    border-radius:50%;
+
+    background:#dcecf8;
+
+    color:#1261a0;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-size:30px;
+
+    font-weight:bold;
+
+    margin-bottom:15px;
+}
+
+
+/* ================= TOAST ================= */
+
+.toast{
+    position:fixed;
+
+    right:25px;
+
+    bottom:25px;
+
+    padding:14px 20px;
+
+    background:#198754;
+
+    color:white;
+
+    border-radius:9px;
+
+    z-index:500;
+
+    box-shadow:
+    0 10px 30px
+    rgba(0,0,0,.2);
+}
+
+.toast.error{
+    background:#c93636;
+}
+
+
+/* ================= RESPONSIVE ================= */
+
+@media(max-width:900px){
+
+    .stats{
+        grid-template-columns:
+        repeat(2,1fr);
+    }
+
+    .available-grid{
+        grid-template-columns:
+        repeat(3,1fr);
+    }
+
+    .map-row{
+        grid-template-columns:
+        repeat(5,1fr);
+
+        gap:8px;
+    }
+
+    .parking-map{
+        padding-left:20px;
+        padding-right:20px;
+    }
+
+    .map-slot{
+        height:80px;
+
+        font-size:15px;
+    }
+
+}
+
+@media(max-width:650px){
+
+    .sidebar{
+        width:65px;
+    }
+
+    .menu{
+        text-align:center;
+
+        padding:13px 5px;
+
+        font-size:0;
+    }
+
+    .main{
+        margin-left:65px;
+
+        padding:
+        90px 15px 20px;
+    }
+
+    .brand h2{
+        font-size:15px;
+    }
+
+    .profile-name{
+        display:none;
+    }
+
+    .stats{
+        grid-template-columns:
+        1fr 1fr;
+
+        gap:10px;
+    }
+
+    .available-grid{
+        grid-template-columns:
+        repeat(2,1fr);
+    }
+
+    .parking-map{
+        padding:
+        55px 10px 70px;
+    }
+
+    .map-row{
+        gap:5px;
+    }
+
+    .map-slot{
+        height:65px;
+
+        font-size:12px;
+
+        border-width:2px;
+    }
+
+    .drive-lane{
+        height:30px;
+
+        font-size:8px;
+    }
+
+    .mini-slots{
+        grid-template-columns:
+        repeat(4,1fr);
+    }
+}
+
+</style>
+</head>
+
+
+<body>
+
+
+<!-- ==================================================
+     LOGIN / SIGNUP
+================================================== -->
+
+<div id="authPage" class="auth-page">
+
+<div class="auth-card">
+
+<div class="logo">
+
+<div class="logo-icon">
+P
+</div>
+
+<h1>
+Smart Parking System
+</h1>
+
+<p>
+Smart • Secure • Convenient
+</p>
+
+</div>
+
+
+<!-- LOGIN -->
+
+<div id="loginForm">
+
+<h2>
+Welcome Back
+</h2>
+
+<div class="form-group">
+
+<label>
+Email Address
+</label>
+
+<input
+id="loginEmail"
+type="email"
+placeholder="Enter your email">
+
+</div>
+
+
+<div class="form-group">
+
+<label>
+Password
+</label>
+
+<input
+id="loginPassword"
+type="password"
+placeholder="Enter your password">
+
+</div>
+
+
+<button
+class="primary-btn"
+onclick="login()">
+
+Login
+
+</button>
+
+
+<div class="switch">
+
+Don't have an account?
+
+<span onclick="showSignup()">
+Sign Up
+</span>
+
+</div>
+
+</div>
+
+
+<!-- SIGN UP -->
+
+<div id="signupForm" class="hidden">
+
+<h2>
+Create Account
+</h2>
+
+
+<div class="form-group">
+
+<label>
+Full Name
+</label>
+
+<input
+id="name"
+type="text"
+placeholder="Enter your name">
+
+</div>
+
+
+<div class="form-group">
+
+<label>
+Email Address
+</label>
+
+<input
+id="email"
+type="email"
+placeholder="Enter your email">
+
+</div>
+
+
+<div class="form-group">
+
+<label>
+Phone Number
+</label>
+
+<input
+id="phone"
+type="tel"
+placeholder="10-digit phone number">
+
+</div>
+
+
+<button
+class="secondary-btn"
+onclick="sendOTP()">
+
+Send OTP
+
+</button>
+
+
+<div
+id="otpArea"
+class="form-group hidden">
+
+<label>
+Enter OTP
+</label>
+
+<input
+id="otp"
+type="text"
+placeholder="Enter OTP">
+
+<button
+class="secondary-btn"
+onclick="verifyOTP()">
+
+Verify OTP
+
+</button>
+
+</div>
+
+
+<div class="form-group">
+
+<label>
+Password
+</label>
+
+<input
+id="password"
+type="password"
+placeholder="Create password">
+
+</div>
+
+
+<button
+class="primary-btn"
+onclick="createAccount()">
+
+Create Account
+
+</button>
+
+
+<div class="switch">
+
+Already have an account?
+
+<span onclick="showLogin()">
+Login
+</span>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+
+<!-- ==================================================
+     APPLICATION
+================================================== -->
+
+<div id="application" class="hidden">
+
+
+<!-- TOP BAR -->
+
+<header class="topbar">
+
+<div class="brand">
+
+<div class="brand-icon">
+P
+</div>
+
+<h2>
+Smart Parking System
+</h2>
+
+</div>
+
+
+<div
+class="profile"
+onclick="showPage('profilePage')">
+
+<span
+id="topName"
+class="profile-name">
+
+User
+
+</span>
+
+<div
+id="avatar"
+class="avatar">
+
+U
+
+</div>
+
+</div>
+
+</header>
+
+
+
+<!-- SIDEBAR -->
+
+<aside class="sidebar">
+
+<div
+class="menu active"
+onclick="showPage('homePage')">
+
+🏠 Home
+
+</div>
+
+
+<div
+class="menu"
+onclick="showPage('parkingPage')">
+
+🅿️ Parking Map
+
+</div>
+
+
+<div
+class="menu"
+onclick="showPage('bookingPage')">
+
+🎫 My Booking
+
+</div>
+
+
+<div
+class="menu"
+onclick="showPage('qrPage')">
+
+📱 QR Code
+
+</div>
+
+
+<div
+class="menu"
+onclick="showPage('profilePage')">
+
+👤 Profile
+
+</div>
+
+
+<div
+class="menu"
+onclick="logout()">
+
+🚪 Logout
+
+</div>
+
+</aside>
+
+
+
+<!-- MAIN -->
+
+<main class="main">
+
+
+<!-- ==================================================
+     HOME
+================================================== -->
+
+<section
+id="homePage"
+class="app-page">
+
+
+<h1 class="page-title">
+
+Parking Dashboard
+
+</h1>
+
+
+<p class="page-subtitle">
+
+Real-time parking overview.
+
+</p>
+
+
+
+<div class="stats">
+
+
+<!-- EMPTY -->
+
+<div
+class="stat clickable"
+onclick="showEmptySlots()">
+
+<div class="stat-label">
+
+Empty Slots
+
+</div>
+
+<div
+id="emptyCount"
+class="stat-number green">
+
+0
+
+</div>
+
+</div>
+
+
+<!-- OCCUPIED -->
+
+<div class="stat">
+
+<div class="stat-label">
+
+Occupied Slots
+
+</div>
+
+<div
+id="occupiedCount"
+class="stat-number red">
+
+0
+
+</div>
+
+</div>
+
+
+<!-- RESERVED -->
+
+<div class="stat">
+
+<div class="stat-label">
+
+Reserved Slots
+
+</div>
+
+<div
+id="reservedCount"
+class="stat-number orange">
+
+0
+
+</div>
+
+</div>
+
+
+<!-- TOTAL -->
+
+<div class="stat">
+
+<div class="stat-label">
+
+Total Slots
+
+</div>
+
+<div class="stat-number blue">
+
+20
+
+</div>
+
+</div>
+
+</div>
+
+
+
+<div class="section">
+
+
+<div class="section-header">
+
+<div>
+
+<h2>
+Parking Overview
+</h2>
+
+<p
+style="color:#718096;margin-top:5px;">
+
+Tap "Empty Slots" above to choose
+an available parking slot.
+
+</p>
+
+</div>
+
+</div>
+
+
+<div
+id="homeMiniSlots"
+class="mini-slots">
+
+</div>
+
+
+</div>
+
+
+</section>
+
+
+
+<!-- ==================================================
+     EMPTY SLOTS
+================================================== -->
+
+<section
+id="emptyPage"
+class="app-page hidden">
+
+
+<h1 class="page-title">
+
+Available Parking Slots
+
+</h1>
+
+
+<p class="page-subtitle">
+
+Choose your preferred available slot.
+
+</p>
+
+
+<div class="section">
+
+
+<div
+id="availableSlots"
+class="available-grid">
+
+</div>
+
+
+</div>
+
+
+</section>
+
+
+
+<!-- ==================================================
+     PARKING MAP
+================================================== -->
+
+<section
+id="parkingPage"
+class="app-page hidden">
+
+
+<h1 class="page-title">
+
+Parking Map
+
+</h1>
+
+
+<p class="page-subtitle">
+
+Tap any green slot to start booking.
+
+</p>
+
+
+<div class="section">
+
+
+<div class="parking-map">
+
+
+<div class="map-title">
+
+SMART PARKING AREA
+
+</div>
+
+
+<div id="mapContainer">
+</div>
+
+
+<div class="map-entrance">
+
+🚗 ENTRANCE
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+</section>
+
+
+
+<!-- ==================================================
+     BOOKING
+================================================== -->
+
+<section
+id="bookingPage"
+class="app-page hidden">
+
+
+<h1 class="page-title">
+
+My Booking
+
+</h1>
+
+
+<p class="page-subtitle">
+
+Your active parking reservation.
+
+</p>
+
+
+<div id="bookingContent">
+</div>
+
+
+</section>
+
+
+
+<!-- ==================================================
+     QR
+================================================== -->
+
+<section
+id="qrPage"
+class="app-page hidden">
+
+
+<h1 class="page-title">
+
+Parking Access QR
+
+</h1>
+
+
+<p class="page-subtitle">
+
+Show this QR at the entrance gate.
+
+</p>
+
+
+<div class="qr-card">
+
+
+<h2>
+
+Gate Access QR
+
+</h2>
+
+
+<p
+style="color:#718096;margin-top:6px;">
+
+Scan at ESP32-CAM
+
+</p>
+
+
+<div id="qrcode">
+</div>
+
+
+<div
+id="qrNoBooking"
+style="color:#718096;">
+
+No active booking.
+
+</div>
+
+
+<div
+id="qrDetails"
+class="qr-details hidden">
+
+
+<p>
+
+<strong>Name:</strong>
+
+<span id="qrName"></span>
+
+</p>
+
+
+<p>
+
+<strong>User ID:</strong>
+
+<span id="qrUser"></span>
+
+</p>
+
+
+<p>
+
+<strong>Booking ID:</strong>
+
+<span id="qrBooking"></span>
+
+</p>
+
+
+<p>
+
+<strong>Slot:</strong>
+
+<span id="qrSlot"></span>
+
+</p>
+
+
+<p>
+
+<strong>Duration:</strong>
+
+<span id="qrDuration"></span>
+
+</p>
+
+
+<p>
+
+<strong>Expires:</strong>
+
+<span id="qrExpiry"></span>
+
+</p>
+
+
+</div>
+
+
+</div>
+
+
+</section>
+
+
+
+<!-- ==================================================
+     PROFILE
+================================================== -->
+
+<section
+id="profilePage"
+class="app-page hidden">
+
+
+<h1 class="page-title">
+
+My Profile
+
+</h1>
+
+
+<p class="page-subtitle">
+
+Account information.
+
+</p>
+
+
+<div class="profile-card">
+
+
+<div
+id="largeAvatar"
+class="large-avatar">
+
+U
+
+</div>
+
+
+<h2 id="profileHeading">
+User
+</h2>
+
+
+<div class="booking-info">
+
+
+<div class="info-row">
+
+<span>
+Name
+</span>
+
+<strong id="profileName">
+-
+</strong>
+
+</div>
+
+
+<div class="info-row">
+
+<span>
+Email
+</span>
+
+<strong id="profileEmail">
+-
+</strong>
+
+</div>
+
+
+<div class="info-row">
+
+<span>
+Phone
+</span>
+
+<strong id="profilePhone">
+-
+</strong>
+
+</div>
+
+
+<div class="info-row">
+
+<span>
+User ID
+</span>
+
+<strong id="profileID">
+-
+</strong>
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+</section>
+
+
+</main>
+
+</div>
+
+
+
+<!-- ==================================================
+     BOOKING MODAL
+================================================== -->
+
+<div
+id="bookingModal"
+class="modal-bg hidden">
+
+
+<div class="modal">
+
+
+<h2>
+
+Reserve Parking Slot
+
+</h2>
+
+
+<p style="color:#718096;">
+
+First select how many hours you
+want to park.
+
+</p>
+
+
+<div class="slot-selected">
+
+
+<strong
+id="selectedSlotText">
+
+S1
+
+</strong>
+
+
+<p
+style="margin-top:5px;color:#177a43;">
+
+Available
+
+</p>
+
+
+</div>
+
+
+
+<div class="form-group">
+
+<label>
+
+How many hours?
+
+</label>
+
+
+<select
+id="duration"
+onchange="calculatePrice()">
+
+
+<option value="1">
+1 Hour
+</option>
+
+
+<option value="2">
+2 Hours
+</option>
+
+
+<option value="3">
+3 Hours
+</option>
+
+
+<option value="4">
+4 Hours
+</option>
+
+
+<option value="5">
+5 Hours
+</option>
+
+
+<option value="6">
+6 Hours
+</option>
+
+
+<option value="7">
+7 Hours
+</option>
+
+
+<option value="8">
+8 Hours
+</option>
+
+
+</select>
+
+</div>
+
+
+
+<div class="price-box">
+
+
+<div>
+
+<span>
+Rate
+</span>
+
+<strong>
+₹20 / hour
+</strong>
+
+</div>
+
+
+<div>
+
+<span>
+Duration
+</span>
+
+<strong id="durationText">
+1 Hour
+</strong>
+
+</div>
+
+
+<div>
+
+<span>
+Total Amount
+</span>
+
+<strong
+id="totalPrice"
+class="total-price">
+
+₹20
+
+</strong>
+
+</div>
+
+
+</div>
+
+
+
+<button
+id="paymentButton"
+class="primary-btn"
+onclick="demoPayment()">
+
+Pay ₹20
+
+</button>
+
+
+<button
+class="secondary-btn"
+onclick="closeBookingModal()">
+
+Cancel
+
+</button>
+
+
+</div>
+
+</div>
+
+
+
+<!-- TOAST -->
+
+<div
+id="toast"
+class="toast hidden">
+
+</div>
+
+
+
+<script>
+
+
+/* =====================================================
+   VARIABLES
+===================================================== */
+
+let user = null;
+
+let booking = null;
+
+let selectedSlot = null;
+
+let otp = null;
+
+let otpVerified = false;
+
+let timerInterval = null;
+
+
+
+/* =====================================================
+   PARKING DATA
+===================================================== */
+
+let slots = [
+
+    {id:"S1", status:"empty"},
+    {id:"S2", status:"occupied"},
+    {id:"S3", status:"empty"},
+    {id:"S4", status:"reserved"},
+    {id:"S5", status:"empty"},
+
+    {id:"S6", status:"occupied"},
+    {id:"S7", status:"empty"},
+    {id:"S8", status:"empty"},
+    {id:"S9", status:"reserved"},
+    {id:"S10",status:"empty"},
+
+    {id:"S11",status:"occupied"},
+    {id:"S12",status:"empty"},
+    {id:"S13",status:"empty"},
+    {id:"S14",status:"occupied"},
+    {id:"S15",status:"empty"},
+
+    {id:"S16",status:"empty"},
+    {id:"S17",status:"reserved"},
+    {id:"S18",status:"empty"},
+    {id:"S19",status:"occupied"},
+    {id:"S20",status:"empty"}
+
+];
+
+
+
+/* =====================================================
+   TOAST
+===================================================== */
+
+function toast(message,type="success"){
+
+    const box =
+        document.getElementById("toast");
+
+    box.textContent = message;
+
+    box.className =
+        "toast " + type;
+
+    setTimeout(()=>{
+
+        box.classList.add("hidden");
+
+    },3000);
+
+}
+
+
+
+/* =====================================================
+   AUTH
+===================================================== */
+
+function showSignup(){
+
+    document
+    .getElementById("loginForm")
+    .classList.add("hidden");
+
+    document
+    .getElementById("signupForm")
+    .classList.remove("hidden");
+
+}
+
+
+
+function showLogin(){
+
+    document
+    .getElementById("signupForm")
+    .classList.add("hidden");
+
+    document
+    .getElementById("loginForm")
+    .classList.remove("hidden");
+
+}
+
+
+
+/* =====================================================
+   OTP
+===================================================== */
+
+function sendOTP(){
+
+    const phone =
+        document
+        .getElementById("phone")
+        .value
+        .trim();
+
+
+    if(!/^[0-9]{10}$/.test(phone)){
+
+        toast(
+            "Enter a valid 10-digit phone number.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    otp =
+        Math.floor(
+            100000 +
+            Math.random()*900000
+        );
+
+
+    document
+    .getElementById("otpArea")
+    .classList.remove("hidden");
+
+
+    toast(
+        "Demo OTP: " + otp
+    );
+
+}
+
+
+
+function verifyOTP(){
+
+    const entered =
+        document
+        .getElementById("otp")
+        .value
+        .trim();
+
+
+    if(entered == otp){
+
+        otpVerified = true;
+
+        toast(
+            "Phone number verified."
+        );
+
+    }else{
+
+        toast(
+            "Incorrect OTP.",
+            "error"
+        );
+
+    }
+
+}
+
+
+
+/* =====================================================
+   CREATE ACCOUNT
+===================================================== */
+
+function createAccount(){
+
+    const name =
+        document
+        .getElementById("name")
+        .value
+        .trim();
+
+
+    const email =
+        document
+        .getElementById("email")
+        .value
+        .trim();
+
+
+    const phone =
+        document
+        .getElementById("phone")
+        .value
+        .trim();
+
+
+    const password =
+        document
+        .getElementById("password")
+        .value;
+
+
+    if(!name ||
+       !email ||
+       !phone ||
+       !password){
+
+        toast(
+            "Please fill all fields.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if(!otpVerified){
+
+        toast(
+            "Verify your phone number first.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    user = {
+
+        name:name,
+
+        email:email,
+
+        phone:phone,
+
+        id:
+        "USR-" +
+        Date.now()
+        .toString()
+        .slice(-8)
+
+    };
+
+
+    localStorage.setItem(
+        "smartParkingUser",
+        JSON.stringify(user)
+    );
+
+
+    toast(
+        "Account created successfully."
+    );
+
+
+    setTimeout(
+        showLogin,
+        1000
+    );
+
+}
+
+
+
+/* =====================================================
+   LOGIN
+===================================================== */
+
+function login(){
+
+    const email =
+        document
+        .getElementById("loginEmail")
+        .value
+        .trim();
+
+
+    const password =
+        document
+        .getElementById("loginPassword")
+        .value;
+
+
+    if(!email || !password){
+
+        toast(
+            "Enter email and password.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    const saved =
+        localStorage.getItem(
+            "smartParkingUser"
+        );
+
+
+    if(!saved){
+
+        toast(
+            "Create an account first.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    user =
+        JSON.parse(saved);
+
+
+    if(email !== user.email){
+
+        toast(
+            "Email not found.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    localStorage.setItem(
+        "loggedIn",
+        "true"
+    );
+
+
+    openApplication();
+
+}
+
+
+
+/* =====================================================
+   OPEN APPLICATION
+===================================================== */
+
+function openApplication(){
+
+    document
+    .getElementById("authPage")
+    .classList.add("hidden");
+
+
+    document
+    .getElementById("application")
+    .classList.remove("hidden");
+
+
+    updateProfile();
+
+    renderMap();
+
+    renderHomeMiniSlots();
+
+    renderAvailableSlots();
+
+    updateDashboard();
+
+    updateBooking();
+
+    updateQR();
+
+    startTimer();
+
+}
+
+
+
+/* =====================================================
+   PROFILE
+===================================================== */
+
+function updateProfile(){
+
+    if(!user) return;
+
+
+    const first =
+        user.name
+        .charAt(0)
+        .toUpperCase();
+
+
+    document
+    .getElementById("topName")
+    .textContent =
+        user.name;
+
+
+    document
+    .getElementById("avatar")
+    .textContent =
+        first;
+
+
+    document
+    .getElementById("largeAvatar")
+    .textContent =
+        first;
+
+
+    document
+    .getElementById("profileHeading")
+    .textContent =
+        user.name;
+
+
+    document
+    .getElementById("profileName")
+    .textContent =
+        user.name;
+
+
+    document
+    .getElementById("profileEmail")
+    .textContent =
+        user.email;
+
+
+    document
+    .getElementById("profilePhone")
+    .textContent =
+        user.phone;
+
+
+    document
+    .getElementById("profileID")
+    .textContent =
+        user.id;
+
+}
+
+
+
+/* =====================================================
+   PAGE NAVIGATION
+===================================================== */
+
+function showPage(id){
+
+    document
+    .querySelectorAll(".app-page")
+    .forEach(
+        page =>
+        page.classList.add("hidden")
+    );
+
+
+    document
+    .getElementById(id)
+    .classList.remove("hidden");
+
+
+    if(id === "parkingPage"){
+
+        renderMap();
+
+    }
+
+
+    if(id === "emptyPage"){
+
+        renderAvailableSlots();
+
+    }
+
+
+    if(id === "bookingPage"){
+
+        updateBooking();
+
+    }
+
+
+    if(id === "qrPage"){
+
+        updateQR();
+
+    }
+
+}
+
+
+
+/* =====================================================
+   EMPTY SLOTS PAGE
+===================================================== */
+
+function showEmptySlots(){
+
+    showPage(
+        "emptyPage"
+    );
+
+}
+
+
+
+function renderAvailableSlots(){
+
+    const box =
+        document
+        .getElementById(
+            "availableSlots"
+        );
+
+
+    if(!box) return;
+
+
+    box.innerHTML = "";
+
+
+    const emptySlots =
+        slots.filter(
+            slot =>
+            slot.status === "empty"
+        );
+
+
+    if(emptySlots.length === 0){
+
+        box.innerHTML = `
+
+        <div style="
+            grid-column:1/-1;
+            text-align:center;
+            padding:50px;
+            color:#718096;">
+
+            <h2>
+                No Empty Slots
+            </h2>
+
+            <p style="margin-top:8px;">
+                All parking slots are
+                currently occupied or reserved.
+            </p>
+
+        </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    emptySlots.forEach(
+        slot=>{
+
+            const div =
+                document.createElement(
+                    "div"
+                );
+
+
+            div.className =
+                "available-slot";
+
+
+            div.innerHTML = `
+
+                ${slot.id}
+
+                <span>
+                    Available • Tap to Book
+                </span>
+
+            `;
+
+
+            div.onclick =
+                function(){
+
+                    selectSlot(
+                        slot.id
+                    );
+
+                };
+
+
+            box.appendChild(div);
+
+        }
+    );
+
+}
+
+
+
+/* =====================================================
+   PARKING MAP
+===================================================== */
+
+function renderMap(){
+
+    const container =
+        document
+        .getElementById(
+            "mapContainer"
+        );
+
+
+    if(!container) return;
+
+
+    container.innerHTML = "";
+
+
+    /*
+       Four neat rows.
+       Five slots in each row.
+    */
+
+    for(let row=0; row<4; row++){
+
+        const rowDiv =
+            document.createElement(
+                "div"
+            );
+
+
+        rowDiv.className =
+            "map-row";
+
+
+        for(
+            let i=0;
+            i<5;
+            i++
+        ){
+
+            const index =
+                row*5+i;
+
+
+            const slot =
+                slots[index];
+
+
+            const div =
+                document.createElement(
+                    "div"
+                );
+
+
+            div.className =
+                "map-slot " +
+                slot.status;
+
+
+            div.textContent =
+                slot.id;
+
+
+            if(
+                slot.status ===
+                "empty"
+            ){
+
+                div.onclick =
+                    function(){
+
+                        selectSlot(
+                            slot.id
+                        );
+
+                    };
+
+            }
+
+
+            rowDiv.appendChild(
+                div
+            );
+
+        }
+
+
+        container.appendChild(
+            rowDiv
+        );
+
+
+        /*
+           Drive lane between rows.
+        */
+
+        if(row < 3){
+
+            const lane =
+                document.createElement(
+                    "div"
+                );
+
+
+            lane.className =
+                "drive-lane";
+
+
+            lane.textContent =
+                "DRIVE WAY";
+
+
+            container.appendChild(
+                lane
+            );
+
+        }
+
+    }
+
+}
+
+
+
+/* =====================================================
+   HOME MINI SLOTS
+===================================================== */
+
+function renderHomeMiniSlots(){
+
+    const box =
+        document
+        .getElementById(
+            "homeMiniSlots"
+        );
+
+
+    if(!box) return;
+
+
+    box.innerHTML = "";
+
+
+    slots.forEach(
+        slot=>{
+
+            const div =
+                document.createElement(
+                    "div"
+                );
+
+
+            div.className =
+                "mini-slot";
+
+
+            div.textContent =
+                slot.id;
+
+
+            if(
+                slot.status ===
+                "empty"
+            ){
+
+                div.style.background =
+                    "#42b96a";
+
+            }
+
+
+            if(
+                slot.status ===
+                "occupied"
+            ){
+
+                div.style.background =
+                    "#df5050";
+
+            }
+
+
+            if(
+                slot.status ===
+                "reserved"
+            ){
+
+                div.style.background =
+                    "#e3a332";
+
+            }
+
+
+            box.appendChild(
+                div
+            );
+
+        }
+    );
+
+}
+
+
+
+/* =====================================================
+   DASHBOARD
+===================================================== */
+
+function updateDashboard(){
+
+    const empty =
+        slots.filter(
+            s =>
+            s.status ===
+            "empty"
+        ).length;
+
+
+    const occupied =
+        slots.filter(
+            s =>
+            s.status ===
+            "occupied"
+        ).length;
+
+
+    const reserved =
+        slots.filter(
+            s =>
+            s.status ===
+            "reserved"
+        ).length;
+
+
+    document
+    .getElementById(
+        "emptyCount"
+    )
+    .textContent =
+        empty;
+
+
+    document
+    .getElementById(
+        "occupiedCount"
+    )
+    .textContent =
+        occupied;
+
+
+    document
+    .getElementById(
+        "reservedCount"
+    )
+    .textContent =
+        reserved;
+
+}
+
+
+
+/* =====================================================
+   SELECT SLOT
+===================================================== */
+
+function selectSlot(id){
+
+    /*
+       Only one active booking.
+    */
+
+    if(booking){
+
+        toast(
+            "You already have an active booking. Only one slot is allowed.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    const slot =
+        slots.find(
+            s =>
+            s.id === id
+        );
+
+
+    if(
+        !slot ||
+        slot.status !==
+        "empty"
+    ){
+
+        toast(
+            "This slot is not available.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    selectedSlot =
+        id;
+
+
+    document
+    .getElementById(
+        "selectedSlotText"
+    )
+    .textContent =
+        id;
+
+
+    document
+    .getElementById(
+        "duration"
+    )
+    .value =
+        "1";
+
+
+    calculatePrice();
+
+
+    document
+    .getElementById(
+        "bookingModal"
+    )
+    .classList.remove(
+        "hidden"
+    );
+
+}
+
+
+
+/* =====================================================
+   CLOSE MODAL
+===================================================== */
+
+function closeBookingModal(){
+
+    document
+    .getElementById(
+        "bookingModal"
+    )
+    .classList.add(
+        "hidden"
+    );
+
+
+    selectedSlot =
+        null;
+
+}
+
+
+
+/* =====================================================
+   CALCULATE PRICE
+===================================================== */
+
+function calculatePrice(){
+
+    const hours =
+        parseInt(
+            document
+            .getElementById(
+                "duration"
+            )
+            .value
+        );
+
+
+    const amount =
+        hours * 20;
+
+
+    document
+    .getElementById(
+        "durationText"
+    )
+    .textContent =
+        hours +
+        (
+            hours === 1
+            ? " Hour"
+            : " Hours"
+        );
+
+
+    document
+    .getElementById(
+        "totalPrice"
+    )
+    .textContent =
+        "₹" + amount;
+
+
+    document
+    .getElementById(
+        "paymentButton"
+    )
+    .textContent =
+        "Pay ₹" + amount;
+
+}
+
+
+
+/* =====================================================
+   DEMO PAYMENT
+===================================================== */
+
+function demoPayment(){
+
+    if(!selectedSlot){
+
+        toast(
+            "Select a slot first.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if(booking){
+
+        toast(
+            "You already have an active booking.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    const hours =
+        parseInt(
+            document
+            .getElementById(
+                "duration"
+            )
+            .value
+        );
+
+
+    const startTime =
+        Date.now();
+
+
+    const expiryTime =
+        startTime +
+        hours *
+        60 *
+        60 *
+        1000;
+
+
+    const bookingID =
+        "BOOK-" +
+        Date.now()
+        .toString()
+        .slice(-8);
+
+
+    booking = {
+
+        bookingID:
+            bookingID,
+
+        userID:
+            user.id,
+
+        name:
+            user.name,
+
+        email:
+            user.email,
+
+        slot:
+            selectedSlot,
+
+        duration:
+            hours,
+
+        amount:
+            hours * 20,
+
+        startTime:
+            startTime,
+
+        expiryTime:
+            expiryTime,
+
+        paymentStatus:
+            "SUCCESS",
+
+        bookingStatus:
+            "ACTIVE",
+
+        extraHoursPaid:
+            0
+
+    };
+
+
+    const slot =
+        slots.find(
+            s =>
+            s.id ===
+            selectedSlot
+        );
+
+
+    if(slot){
+
+        slot.status =
+            "reserved";
+
+    }
+
+
+    localStorage.setItem(
+        "smartParkingBooking",
+        JSON.stringify(
+            booking
+        )
+    );
+
+
+    toast(
+        "Demo payment successful!"
+    );
+
+
+    closeBookingModal();
+
+
+    renderMap();
+
+    renderAvailableSlots();
+
+    renderHomeMiniSlots();
+
+    updateDashboard();
+
+    updateBooking();
+
+    updateQR();
+
+    startTimer();
+
+
+    setTimeout(
+        function(){
+
+            showPage(
+                "qrPage"
+            );
+
+        },
+        700
+    );
+
+}
+
+
+
+/* =====================================================
+   BOOKING PAGE
+===================================================== */
+
+function updateBooking(){
+
+    const box =
+        document
+        .getElementById(
+            "bookingContent"
+        );
+
+
+    if(!box) return;
+
+
+    if(!booking){
+
+        box.innerHTML = `
+
+        <div class="section">
+
+            <h2>
+                No Active Booking
+            </h2>
+
+            <p style="
+                color:#718096;
+                margin-top:8px;">
+
+                Select an available slot
+                from the parking map or
+                Empty Slots page.
+
+            </p>
+
+        </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    box.innerHTML = `
+
+    <div class="booking-card">
+
+        <h2>
+            Active Parking Booking
+        </h2>
+
+        <div
+            id="bookingTimer"
+            class="timer">
+
+            Checking time...
+
+        </div>
+
+
+        <div class="booking-info">
+
+
+            <div class="info-row">
+
+                <span>
+                    Booking ID
+                </span>
+
+                <strong>
+                    ${booking.bookingID}
+                </strong>
+
+            </div>
+
+
+            <div class="info-row">
+
+                <span>
+                    Parking Slot
+                </span>
+
+                <strong>
+                    ${booking.slot}
+                </strong>
+
+            </div>
+
+
+            <div class="info-row">
+
+                <span>
+                    Duration
+                </span>
+
+                <strong>
+                    ${booking.duration}
+                    ${
+                        booking.duration === 1
+                        ? " Hour"
+                        : " Hours"
+                    }
+                </strong>
+
+            </div>
+
+
+            <div class="info-row">
+
+                <span>
+                    Amount Paid
+                </span>
+
+                <strong>
+                    ₹${booking.amount}
+                </strong>
+
+            </div>
+
+
+            <div class="info-row">
+
+                <span>
+                    Payment
+                </span>
+
+                <strong
+                style="color:#198754;">
+
+                    SUCCESS
+
+                </strong>
+
+            </div>
+
+
+        </div>
+
+
+        <button
+            class="primary-btn"
+            onclick="showPage('qrPage')">
+
+            View QR Code
+
+        </button>
+
+
+    </div>
+
+    `;
+
+
+    updateTimerDisplay();
+
+}
+
+
+
+/* =====================================================
+   TIMER
+===================================================== */
+
+function startTimer(){
+
+    if(timerInterval){
+
+        clearInterval(
+            timerInterval
+        );
+
+    }
+
+
+    timerInterval =
+        setInterval(
+            updateTimerDisplay,
+            1000
+        );
+
+}
+
+
+
+function updateTimerDisplay(){
+
+    if(!booking){
+
+        return;
+
+    }
+
+
+    const timer =
+        document
+        .getElementById(
+            "bookingTimer"
+        );
+
+
+    if(!timer){
+
+        return;
+
+    }
+
+
+    const remaining =
+        booking.expiryTime -
+        Date.now();
+
+
+    if(remaining <= 0){
+
+        timer.innerHTML = `
+
+        ⚠️ Parking time expired.
+
+        <br><br>
+
+        Additional charge:
+
+        <strong>
+            ₹20 / extra hour
+        </strong>
+
+        <br><br>
+
+        <button
+            class="primary-btn"
+            onclick="payExtraHour()">
+
+            Pay ₹20 for Next Hour
+
+        </button>
+
+        `;
+
+        return;
+
+    }
+
+
+    const totalSeconds =
+        Math.floor(
+            remaining / 1000
+        );
+
+
+    const hours =
+        Math.floor(
+            totalSeconds /
+            3600
+        );
+
+
+    const minutes =
+        Math.floor(
+            (totalSeconds % 3600) /
+            60
+        );
+
+
+    const seconds =
+        totalSeconds % 60;
+
+
+    timer.innerHTML =
+
+        "⏱ Remaining Time: " +
+
+        String(hours)
+        .padStart(2,"0") +
+
+        ":" +
+
+        String(minutes)
+        .padStart(2,"0") +
+
+        ":" +
+
+        String(seconds)
+        .padStart(2,"0");
+
+}
+
+
+
+/* =====================================================
+   EXTRA HOUR
+===================================================== */
+
+function payExtraHour(){
+
+    if(!booking){
+
+        return;
+
+    }
+
+
+    booking.amount += 20;
+
+    booking.duration += 1;
+
+    booking.extraHoursPaid += 1;
+
+
+    const now =
+        Date.now();
+
+
+    if(
+        booking.expiryTime <
+        now
+    ){
+
+        booking.expiryTime =
+            now +
+            60 *
+            60 *
+            1000;
+
+    }else{
+
+        booking.expiryTime +=
+            60 *
+            60 *
+            1000;
+
+    }
+
+
+    booking.bookingStatus =
+        "ACTIVE";
+
+
+    localStorage.setItem(
+        "smartParkingBooking",
+        JSON.stringify(
+            booking
+        )
+    );
+
+
+    toast(
+        "₹20 extra-hour demo payment successful."
+    );
+
+
+    updateBooking();
+
+    updateQR();
+
+}
+
+
+
+/* =====================================================
+   QR CODE
+===================================================== */
+
+function updateQR(){
+
+    const qr =
+        document
+        .getElementById(
+            "qrcode"
+        );
+
+
+    const noBooking =
+        document
+        .getElementById(
+            "qrNoBooking"
+        );
+
+
+    const details =
+        document
+        .getElementById(
+            "qrDetails"
+        );
+
+
+    if(!qr) return;
+
+
+    qr.innerHTML = "";
+
+
+    if(!booking){
+
+        noBooking
+        .classList
+        .remove(
+            "hidden"
+        );
+
+
+        details
+        .classList
+        .add(
+            "hidden"
+        );
+
+
+        return;
+
+    }
+
+
+    noBooking
+    .classList
+    .add(
+        "hidden"
+    );
+
+
+    details
+    .classList
+    .remove(
+        "hidden"
+    );
+
+
+    const qrData =
+        JSON.stringify({
+
+            userID:
+                booking.userID,
+
+            name:
+                booking.name,
+
+            bookingID:
+                booking.bookingID,
+
+            slot:
+                booking.slot,
+
+            duration:
+                booking.duration,
+
+            startTime:
+                new Date(
+                    booking.startTime
+                ).toISOString(),
+
+            expiryTime:
+                new Date(
+                    booking.expiryTime
+                ).toISOString()
+
+        });
+
+
+    new QRCode(
+        qr,
+        {
+
+            text:
+                qrData,
+
+            width:
+                230,
+
+            height:
+                230,
+
+            correctLevel:
+                QRCode.CorrectLevel.H
+
+        }
+    );
+
+
+    document
+    .getElementById(
+        "qrName"
+    )
+    .textContent =
+        booking.name;
+
+
+    document
+    .getElementById(
+        "qrUser"
+    )
+    .textContent =
+        booking.userID;
+
+
+    document
+    .getElementById(
+        "qrBooking"
+    )
+    .textContent =
+        booking.bookingID;
+
+
+    document
+    .getElementById(
+        "qrSlot"
+    )
+    .textContent =
+        booking.slot;
+
+
+    document
+    .getElementById(
+        "qrDuration"
+    )
+    .textContent =
+        booking.duration +
+        (
+            booking.duration === 1
+            ? " Hour"
+            : " Hours"
+        );
+
+
+    document
+    .getElementById(
+        "qrExpiry"
+    )
+    .textContent =
+        new Date(
+            booking.expiryTime
+        ).toLocaleString();
+
+}
+
+
+
+/* =====================================================
+   LOGOUT
+===================================================== */
+
+function logout(){
+
+    localStorage.removeItem(
+        "loggedIn"
+    );
+
+    location.reload();
+
+}
+
+
+
+/* =====================================================
+   LOAD DATA
+===================================================== */
+
+window.onload =
+function(){
+
+    const savedUser =
+        localStorage.getItem(
+            "smartParkingUser"
+        );
+
+
+    const savedBooking =
+        localStorage.getItem(
+            "smartParkingBooking"
+        );
+
+
+    if(savedUser){
+
+        user =
+            JSON.parse(
+                savedUser
+            );
+
+    }
+
+
+    if(savedBooking){
+
+        booking =
+            JSON.parse(
+                savedBooking
+            );
+
+
+        const slot =
+            slots.find(
+                s =>
+                s.id ===
+                booking.slot
+            );
+
+
+        if(slot){
+
+            slot.status =
+                "reserved";
+
+        }
+
+    }
+
+
+    const loggedIn =
+        localStorage.getItem(
+            "loggedIn"
+        );
+
+
+    if(
+        loggedIn === "true" &&
+        user
+    ){
+
+        openApplication();
+
+    }
+
+};
+
+</script>
+
+</body>
+</html>
