@@ -2307,13 +2307,38 @@ function createAccount(){
 
     };
 
-database.ref("users/" + user.email.replace(/\./g, "_")).set(user)
-    .then(() => {
-        console.log("User saved to Firebase");
-    })
-    .catch((error) => {
-        console.error("Error saving user:", error);
-    });
+auth.createUserWithEmailAndPassword(email, password)
+.then((credential) => {
+
+    user.authUID = credential.user.uid;
+
+    return database
+        .ref("users/" + credential.user.uid)
+        .set(user);
+
+})
+.then(() => {
+
+    toast(
+        "Account created successfully."
+    );
+
+    setTimeout(
+        showLogin,
+        1000
+    );
+
+})
+.catch((error) => {
+
+    console.error(error);
+
+    toast(
+        error.message,
+        "error"
+    );
+
+});
 
 
     toast(
