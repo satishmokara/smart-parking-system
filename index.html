@@ -3204,7 +3204,7 @@ function demoPayment(){
             booking
         )
     );
-firebase.database().ref("bookings/" + booking.id).set(booking);
+firebase.database().ref("bookings/" + booking.bookingID).set(booking);
 
     toast(
         "Demo payment successful!"
