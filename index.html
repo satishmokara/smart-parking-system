@@ -9,6 +9,13 @@
 <script src="https://www.gstatic.com/firebasejs/12.1.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/12.1.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/12.1.0/firebase-database-compat.js"></script>
+<!-- Put this right under the other compat scripts (around line 12) -->
+<script src="https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore-compat.js"></script>
+
+<!-- 1. ADD THE FIRESTORE SCRIPT CDN HERE -->
+<script src="https://www.gstatic.com/firebasejs/12.1.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore-compat.js"></script> 
+
 <script>
   const firebaseConfig = {
     apiKey: "AIzaSyDXsxBCllTlEwT4fUgbUmw7hbRIq6OoYkg",
@@ -23,10 +30,16 @@
   firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
   const database = firebase.database();
-  database.ref("test").set({
+  
+  // 2. INITIALIZE FIRESTORE HERE (RIGHT BELOW DATABASE)
+  const db = firebase.firestore(); 
+
+  // Optional: Test to see if Firestore is working (creates a 'test' collection)
+  db.collection("test").doc("status").set({
     connected: true
-});
+  });
 </script>
+
 
 <style>
 *{
